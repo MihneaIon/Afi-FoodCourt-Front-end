@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ToastContainer } from './components/Toast'; // Adaugă import
-import RandomRestaurantPicker from './components/RandomRestaurantPicker'; //
 import './App.css';
 
 // Lazy loading pentru performanță
@@ -48,8 +47,6 @@ function App() {
               <Route path="/create" element={<CreateRestaurantPage />} />
             </Routes>
           </Suspense>
-           {/* Random Restaurant Picker - disponibil pe toate paginile */}
-          <RandomRestaurantPicker />
           <ToastContainer /> {/* Adaugă aici */}
         </div>
       </Router>

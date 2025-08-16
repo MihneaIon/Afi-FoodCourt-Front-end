@@ -8,6 +8,7 @@ import RestaurantGrid from '../components/RestaurantGrid';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
 import Pagination from '../components/Pagination';
+import RandomRestaurantPicker from '../components/RandomRestaurantPicker';
 
 const HomePage: React.FC = () => {
   const { filters } = useRestaurantStore();
@@ -80,6 +81,10 @@ const HomePage: React.FC = () => {
                 <span className="sm:hidden">Add New Restaurant</span>
                 <span className="hidden sm:inline">Add Restaurant</span>
               </button>
+            </div>
+            <div>
+              {/* Random Restaurant Picker - disponibil pe toate paginile */}
+              <RandomRestaurantPicker />
             </div>
           </div>
         </div>
