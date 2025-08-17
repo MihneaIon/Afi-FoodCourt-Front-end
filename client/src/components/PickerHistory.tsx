@@ -42,6 +42,8 @@ const PickerHistory: React.FC = () => {
       imageUrl: entry.restaurant.imageUrl,
       priceRange: entry.restaurant.priceRange,
       rating: entry.restaurant.rating,
+      applyDiscount: entry.restaurant.applyDiscount,      // Nou cu valoare default
+      discountPercentage: entry.restaurant.discountPercentage, // Nou cu valoare default
       categories: entry.restaurant.categories.map((cat: string) => ({ category: { name: cat } })),
       isOpen: true,
       address: '',

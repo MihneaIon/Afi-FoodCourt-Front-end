@@ -9,6 +9,8 @@ export interface Restaurant {
   rating: number;
   priceRange: string;
   isOpen: boolean;
+  applyDiscount: boolean;        // Nou
+  discountPercentage?: number;   // Nou
   createdAt: string;
   updatedAt: string;
   categories: RestaurantCategory[];
@@ -73,6 +75,8 @@ export interface CreateRestaurantData {
   website?: string;
   imageUrl?: string;
   priceRange: string;
+  applyDiscount?: boolean;       // Nou
+  discountPercentage?: number;   // Nou
   categoryIds: string[];
 }
 

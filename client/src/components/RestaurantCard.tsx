@@ -105,6 +105,14 @@ const RestaurantCard: React.FC<RestaurantCardProps> = memo(({ restaurant }) => {
               {restaurant.priceRange}
             </span>
           </div>
+          {/* Discount Badge - Nou */}
+          {restaurant.applyDiscount && restaurant.discountPercentage && (
+            <div className="absolute top-3 left-1/2 transform -translate-x-1/2">
+              <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-md animate-pulse">
+                -{restaurant.discountPercentage}% OFF
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -115,6 +123,15 @@ const RestaurantCard: React.FC<RestaurantCardProps> = memo(({ restaurant }) => {
             {restaurant.name}
           </h3>
           <StarRating rating={averageRating} size="sm" />
+           {/* Discount info în footer */}
+        </div>
+        {/* discunt */}
+        <div>
+          {restaurant.applyDiscount && restaurant.discountPercentage && (
+            <span className="text-xs text-red-600 font-medium mt-1">
+              {restaurant.discountPercentage}% discount
+            </span>
+          )}
         </div>
 
         {/* Categories */}
