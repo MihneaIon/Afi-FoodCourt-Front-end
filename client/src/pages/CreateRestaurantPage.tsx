@@ -15,6 +15,8 @@ interface FormData {
   imageUrl: string;
   priceRange: string;
   categoryIds: string[];
+  applyDiscount: boolean;
+  discountPercentage: string;
 }
 
 const CreateRestaurantPage: React.FC = () => {
@@ -30,15 +32,30 @@ const CreateRestaurantPage: React.FC = () => {
     website: '',
     imageUrl: '',
     priceRange: '$$',
-    categoryIds: []
+    categoryIds: [],
+    applyDiscount: false,
+    discountPercentage: '0'
   });
 
-  const [errors, setErrors] = useState<Partial<FormData>>({});
+  interface FormErrors {
+    name?: string;
+    description?: string;
+    address?: string;
+    phone?: string;
+    website?: string;
+    imageUrl?: string;
+    priceRange?: string;
+    categoryIds?: string[];
+    applyDiscount?: string;
+    discountPercentage?: string;
+  }
+  
+  const [errors, setErrors] = useState<FormErrors>({});
   const [imagePreview, setImagePreview] = useState<string>('');
 
   // Validation function
   const validateForm = useCallback((): boolean => {
-    const newErrors: Partial<FormData> = {};
+    const newErrors: FormErrors = {};
 
     if (!formData.name.trim()) {
       newErrors.name = 'Restaurant name is required';
@@ -62,6 +79,10 @@ const CreateRestaurantPage: React.FC = () => {
 
     if (formData.categoryIds.length === 0) {
       newErrors.categoryIds = ['Please select at least one category'];
+    }
+
+    if (formData.applyDiscount && (isNaN(Number.parseInt(formData.discountPercentage)) || Number.parseInt(formData.discountPercentage) <= 0)) {
+      newErrors.discountPercentage = 'Please enter a valid discount percentage';
     }
 
     setErrors(newErrors);
@@ -132,6 +153,7 @@ const CreateRestaurantPage: React.FC = () => {
         phone: formData.phone || undefined,
         website: formData.website || undefined,
         imageUrl: formData.imageUrl || undefined,
+        discountPercentage: Number(formData.discountPercentage),
       });
 
       showToast.success('Restaurant created successfully!');
@@ -327,6 +349,37 @@ const CreateRestaurantPage: React.FC = () => {
               <option value="$$$">$$$ - Expensive ($30-60)</option>
               <option value="$$$$">$$$$ - Very Expensive ($60+)</option>
             </select>
+          </div>
+
+          {/* Discount Toggle and Percentage */}
+          <div className="flex items-center gap-4">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.applyDiscount}
+                onChange={e => setFormData(prev => ({ ...prev, applyDiscount: e.target.checked, discountPercentage: e.target.checked ? prev.discountPercentage : '0' }))}
+                className="form-checkbox h-5 w-5 text-primary-600"
+              />
+              <span className="text-sm font-medium text-gray-700">Apply Discount</span>
+            </label>
+            {formData.applyDiscount && (
+              <div>
+                <label htmlFor="discountPercentage" className="block text-sm font-medium text-gray-700 mb-1">Discount (%)</label>
+                <input
+                  type="number"
+                  id="discountPercentage"
+                  min={1}
+                  max={100}
+                  value={formData.discountPercentage}
+                  onChange={e => setFormData(prev => ({ ...prev, discountPercentage: e.target.value }))}
+                  className={`w-24 px-2 py-1 border rounded-md focus:outline-none focus:ring-1 focus:ring-primary-500 ${errors.discountPercentage ? 'border-red-500' : 'border-gray-300'}`}
+                  placeholder="ex: 10"
+                />
+                {errors.discountPercentage && (
+                  <p className="mt-1 text-sm text-red-600">{errors.discountPercentage}</p>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Categories */}
