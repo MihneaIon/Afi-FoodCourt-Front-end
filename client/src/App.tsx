@@ -15,9 +15,31 @@ const PageSkeleton = () => (
   <div className="min-h-screen bg-gray-50 animate-pulse">
     <div className="h-16 bg-gray-200 mb-8"></div>
     <div className="max-w-7xl mx-auto px-4">
+      {/* Grid de carduri skeleton */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className="bg-white rounded-lg h-64 shadow"></div>
+          <div key={i} className="bg-white rounded-lg shadow overflow-hidden">
+            {/* Image skeleton */}
+            <div className="h-48 bg-gray-200 animate-pulse"></div>
+            
+            {/* Content skeleton */}
+            <div className="p-4 space-y-3">
+              {/* Title skeleton */}
+              <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+              
+              {/* Description skeleton */}
+              <div className="space-y-2">
+                <div className="h-3 bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-3 bg-gray-200 rounded w-3/4 animate-pulse"></div>
+              </div>
+              
+              {/* Tags skeleton */}
+              <div className="flex space-x-2">
+                <div className="h-6 w-16 bg-gray-200 rounded-full animate-pulse"></div>
+                <div className="h-6 w-20 bg-gray-200 rounded-full animate-pulse"></div>
+              </div>
+            </div>
+          </div>
         ))}
       </div>
     </div>
@@ -31,6 +53,8 @@ const queryClient = new QueryClient({
       retry: 3,
       retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
       staleTime: 5 * 60 * 1000,
+      refetchOnWindowFocus: true, // Refetch când user revine la tab
+      refetchOnReconnect: true,   // Refetch când se reconectează la internet
     },
   },
 });

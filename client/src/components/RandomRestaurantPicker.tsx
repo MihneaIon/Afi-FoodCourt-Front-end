@@ -18,6 +18,7 @@ interface RandomPickerFilters {
   rating?: number;
   isOpen?: boolean;
   favoritesOnly?: boolean;
+  discounted?: boolean;
 }
 
 const RandomRestaurantPicker: React.FC = () => {
@@ -84,6 +85,9 @@ const RandomRestaurantPicker: React.FC = () => {
       }
       if (filters.rating) {
         apiFilters.rating = filters.rating;
+      }
+      if(filters.discounted){
+        apiFilters.discounted = filters.discounted;
       }
 
       return restaurantApi.getRestaurants(apiFilters);

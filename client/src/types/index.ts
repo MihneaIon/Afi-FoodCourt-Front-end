@@ -46,6 +46,7 @@ export interface RestaurantFilters {
   search?: string;
   page?: number;
   limit?: number;
+  discounted?: boolean;
 }
 
 export interface PaginationInfo {
