@@ -47,6 +47,8 @@ export interface RestaurantFilters {
   page?: number;
   limit?: number;
   discounted?: boolean;
+  sortBy?: 'rating' | 'name' | 'price' | 'newest'; // Adaugă sortBy
+  sortOrder?: 'asc' | 'desc'; // Adaugă sortOrder
 }
 
 export interface PaginationInfo {

@@ -7,12 +7,12 @@ interface PaginationProps {
 }
 
 const Pagination: React.FC<PaginationProps> = ({ pagination }) => {
-  const { setFilters } = useRestaurantStore();
+  const { setFilters, filters } = useRestaurantStore(); // Adaugă filters pentru debugging
   const { page, pages, total, limit } = pagination;
 
   // Generate page numbers to show
   const pageNumbers = useMemo(() => {
-    const delta = 2; // Number of pages to show on each side of current page
+    const delta = 2;
     const range = [];
     const rangeWithDots = [];
 
@@ -42,8 +42,12 @@ const Pagination: React.FC<PaginationProps> = ({ pagination }) => {
   }, [page, pages]);
 
   const handlePageChange = (newPage: number) => {
-    if (newPage >= 1 && newPage <= pages) {
+    console.log('Pagination: Changing page from', page, 'to', newPage); // Debug
+    console.log('Current filters:', filters); // Debug
+    
+    if (newPage >= 1 && newPage <= pages && newPage !== page) {
       setFilters({ page: newPage });
+      
       // Scroll to top
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }

@@ -134,19 +134,22 @@ const HomePage: React.FC = () => {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                   <p className="text-gray-600">
                     {pagination?.total || 0} restaurants found
+                    {filters.category && ` in ${categories?.find(c => c.slug === filters.category)?.name}`}
+                    {filters.priceRange && ` • ${filters.priceRange} price range`}
+                    {filters.rating && ` • ${filters.rating}+ stars`}
                   </p>
                   <select 
-                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full sm:w-auto"
+                    value={filters.sortBy || 'rating'}
                     onChange={(e) => {
-                      startTransition(() => {
-                        // TODO: Implement sorting logic
-                        console.log('Sort by:', e.target.value);
-                      });
+                      const { setSortBy } = useRestaurantStore.getState();
+                      setSortBy(e.target.value);
                     }}
+                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full sm:w-auto"
                   >
                     <option value="rating">Sort by Rating</option>
                     <option value="name">Sort by Name</option>
                     <option value="price">Sort by Price</option>
+                    <option value="newest">Sort by Newest</option>
                   </select>
                 </div>
 

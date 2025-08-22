@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRestaurantStore } from '../store/restuarantStore';
 import { Category } from '../types';
+import LoadingSpinner from './LoadingSpinner';
 
 interface FilterSidebarProps {
   categories: Category[];
@@ -8,59 +9,83 @@ interface FilterSidebarProps {
 }
 
 const FilterSidebar: React.FC<FilterSidebarProps> = ({ categories, loading }) => {
-  const { filters, setFilters, clearFilters } = useRestaurantStore();
+  const { 
+    filters, 
+    setFilters, 
+    setPriceRange, 
+    setRatingFilter, 
+    clearFilters 
+  } = useRestaurantStore();
 
   const priceRanges = [
-    { value: '$', label: '$ - Budget' },
-    { value: '$$', label: '$$ - Moderate' },
-    { value: '$$$', label: '$$$ - Expensive' },
-    { value: '$$$$', label: '$$$$ - Very Expensive' },
+    { value: '$', label: '$ - Budget (Under $15)', count: 0 },
+    { value: '$$', label: '$$ - Moderate ($15-30)', count: 0 },
+    { value: '$$$', label: '$$$ - Expensive ($30-60)', count: 0 },
+    { value: '$$$$', label: '$$$$ - Very Expensive ($60+)', count: 0 }
   ];
 
-  const ratings = [
-    { value: 4, label: '4+ Stars' },
-    { value: 3, label: '3+ Stars' },
-    { value: 2, label: '2+ Stars' },
-    { value: 1, label: '1+ Stars' },
+  const ratingOptions = [
+    { value: 4.5, label: '4.5+ stars' },
+    { value: 4.0, label: '4.0+ stars' },
+    { value: 3.5, label: '3.5+ stars' },
+    { value: 3.0, label: '3.0+ stars' }
   ];
 
-  return (
-    <div className="bg-white rounded-lg shadow p-6 sticky top-4">
-      <div className="flex items-center justify-between mb-4">
+  const handleCategoryChange = (categorySlug: string) => {
+    setFilters({ 
+      category: filters.category === categorySlug ? undefined : categorySlug 
+    });
+  };
+
+  const handlePriceRangeChange = (priceRange: string) => {
+    setPriceRange(filters.priceRange === priceRange ? undefined : priceRange);
+  };
+
+  const handleRatingChange = (rating: number) => {
+    setRatingFilter(filters.rating === rating ? undefined : rating);
+  };
+
+  const activeFiltersCount = [
+    filters.category,
+    filters.priceRange,
+    filters.rating,
+    filters.search
+  ].filter(Boolean).length;
+
+
+return (
+    <div className="bg-white rounded-lg shadow p-6">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
-        <button
-          onClick={clearFilters}
-          className="text-sm text-primary-600 hover:text-primary-700"
-        >
-          Clear all
-        </button>
+        {activeFiltersCount > 0 && (
+          <button
+            onClick={clearFilters}
+            className="text-sm text-primary-600 hover:text-primary-700"
+          >
+            Clear all ({activeFiltersCount})
+          </button>
+        )}
       </div>
 
       {/* Categories */}
       <div className="mb-6">
         <h4 className="text-sm font-medium text-gray-900 mb-3">Categories</h4>
         {loading ? (
-          <div className="space-y-2">
-            {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-4 bg-gray-200 rounded animate-pulse"></div>
-            ))}
-          </div>
+          <LoadingSpinner size="sm" />
         ) : (
           <div className="space-y-2">
             {categories.map((category) => (
               <label key={category.id} className="flex items-center">
                 <input
-                  type="radio"
-                  name="category"
-                  value={category.slug}
+                  type="checkbox"
                   checked={filters.category === category.slug}
-                  onChange={(e) => setFilters({ 
-                    category: e.target.checked ? category.slug : undefined 
-                  })}
-                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
+                  onChange={() => handleCategoryChange(category.slug)}
+                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
                 />
-                <span className="ml-2 text-sm text-gray-700">
-                  {category.icon} {category.name}
+                <span className="ml-3 text-sm text-gray-700 flex items-center">
+                  <span className="mr-2">{category.icon}</span>
+                  {category.name}
                 </span>
               </label>
             ))}
@@ -75,16 +100,14 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ categories, loading }) =>
           {priceRanges.map((price) => (
             <label key={price.value} className="flex items-center">
               <input
-                type="radio"
-                name="priceRange"
-                value={price.value}
+                type="checkbox"
                 checked={filters.priceRange === price.value}
-                onChange={(e) => setFilters({ 
-                  priceRange: e.target.checked ? price.value : undefined 
-                })}
-                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
+                onChange={() => handlePriceRangeChange(price.value)}
+                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
               />
-              <span className="ml-2 text-sm text-gray-700">{price.label}</span>
+              <span className="ml-3 text-sm text-gray-700">
+                {price.label}
+              </span>
             </label>
           ))}
         </div>
@@ -94,23 +117,64 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ categories, loading }) =>
       <div className="mb-6">
         <h4 className="text-sm font-medium text-gray-900 mb-3">Minimum Rating</h4>
         <div className="space-y-2">
-          {ratings.map((rating) => (
+          {ratingOptions.map((rating) => (
             <label key={rating.value} className="flex items-center">
               <input
-                type="radio"
-                name="rating"
-                value={rating.value}
+                type="checkbox"
                 checked={filters.rating === rating.value}
-                onChange={(e) => setFilters({ 
-                  rating: e.target.checked ? rating.value : undefined 
-                })}
-                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
+                onChange={() => handleRatingChange(rating.value)}
+                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
               />
-              <span className="ml-2 text-sm text-gray-700">{rating.label}</span>
+              <span className="ml-3 text-sm text-gray-700 flex items-center">
+                <span className="text-yellow-400 mr-1">⭐</span>
+                {rating.label}
+              </span>
             </label>
           ))}
         </div>
       </div>
+
+      {/* Active Filters Summary */}
+      {activeFiltersCount > 0 && (
+        <div className="border-t pt-4">
+          <h4 className="text-sm font-medium text-gray-900 mb-2">Active Filters</h4>
+          <div className="flex flex-wrap gap-2">
+            {filters.category && (
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
+                Category: {categories.find(c => c.slug === filters.category)?.name}
+                <button
+                  onClick={() => setFilters({ category: undefined })}
+                  className="ml-1 text-primary-600 hover:text-primary-800"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+            {filters.priceRange && (
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                Price: {filters.priceRange}
+                <button
+                  onClick={() => setPriceRange(undefined)}
+                  className="ml-1 text-green-600 hover:text-green-800"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+            {filters.rating && (
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                Rating: {filters.rating}+ ⭐
+                <button
+                  onClick={() => setRatingFilter(undefined)}
+                  className="ml-1 text-yellow-600 hover:text-yellow-800"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
