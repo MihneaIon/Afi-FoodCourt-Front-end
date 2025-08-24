@@ -202,7 +202,7 @@ const RandomRestaurantPicker: React.FC = () => {
       
       return () => clearTimeout(timeout);
     }
-  }, [isVisible, activeTab]); // Removed other dependencies to prevent auto-triggering
+  }, [isVisible, activeTab, hasInitialPick, isSpinning, selectRandomRestaurant]); // Added missing dependencies
 
   const clearFilters = useCallback(() => {
     setFilters({
@@ -452,6 +452,22 @@ const RandomRestaurantPicker: React.FC = () => {
                             </span>
                           </label>
                         </div>
+
+                         {/* Restaurants with discounts */}
+                        <div className="mb-4">
+                          <label className="flex items-center">
+                            <input
+                              type="checkbox"
+                              checked={filters.discounted}
+                              onChange={(e) => handleFilterChange('discounted', e.target.checked)}
+                              className="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
+                            />
+                            <span className="ml-2 text-sm text-gray-700">
+                              Doar restaurante cu discounturi 🎉
+                            </span>
+                          </label>
+                        </div>
+                        
                       </>
                     )}
 

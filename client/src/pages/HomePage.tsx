@@ -27,7 +27,7 @@ const HomePage: React.FC = () => {
     error: categoriesError
   } = useCategories();
 
-  // Memoized values pentru performanță
+  // Memorized values pentru performanță
   const restaurants = useMemo(() => 
     restaurantData?.restaurants || [], 
     [restaurantData]

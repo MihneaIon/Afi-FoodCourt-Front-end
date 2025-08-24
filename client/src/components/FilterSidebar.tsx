@@ -14,6 +14,8 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ categories, loading }) =>
     setFilters, 
     setPriceRange, 
     setRatingFilter, 
+    setDiscountFilter,
+    setMealTicketsFilter,
     clearFilters 
   } = useRestaurantStore();
 
@@ -44,6 +46,14 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ categories, loading }) =>
   const handleRatingChange = (rating: number) => {
     setRatingFilter(filters.rating === rating ? undefined : rating);
   };
+
+  const handleDiscountChange = (discounted: boolean) => {
+    setDiscountFilter(discounted);
+  }
+
+  const handleMealTicketsChange = (applyMealTickets: boolean) => {
+    setMealTicketsFilter(applyMealTickets);
+  }
 
   const activeFiltersCount = [
     filters.category,
@@ -131,6 +141,38 @@ return (
               </span>
             </label>
           ))}
+        </div>
+      </div>
+          {/* Discount */}
+      <div className="mb-6">
+        <h4 className="text-sm font-medium text-gray-900 mb-3">Accept Afi Club Discount</h4>
+        <div className="space-y-2">
+          <label htmlFor="discount" className="flex items-center">
+            <input type="checkbox" 
+            checked={filters.discounted}
+            onChange={() => handleDiscountChange(filters.discounted ? false : true)}
+            className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"/>
+            <span className="ml-3 text-sm text-gray-700 flex items-center">
+              🫶 
+            </span> Afi Club
+          </label>
+        </div>
+      </div>
+
+      {/* Meal Tickets */}
+      <div className="mb-6">
+        <h4 className="text-sm font-medium text-gray-900 mb-3">Accept Meal Tichets</h4>
+        <div className="space-y-2">
+          <label htmlFor="mealTickets" className="flex items-center">
+            <input type="checkbox" 
+            checked={filters.applyMealTickets}
+            onChange={() => handleMealTicketsChange(filters.applyMealTickets ? false : true)}
+            className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"/>
+            <span className="ml-3 text-sm text-gray-700 flex items-center">
+              💳
+            </span>
+            Pluxee Card
+          </label>
         </div>
       </div>
 
