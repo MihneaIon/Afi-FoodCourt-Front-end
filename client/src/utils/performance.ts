@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'; // Adaugă import pentru React hooks
+import { useState, useEffect, useCallback } from 'react';
 
 // Virtual scrolling pentru liste mari
 export const useVirtualScrolling = (items: any[], itemHeight: number, containerHeight: number) => {

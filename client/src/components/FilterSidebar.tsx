@@ -59,6 +59,8 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ categories, loading }) =>
     filters.category,
     filters.priceRange,
     filters.rating,
+    filters.discounted,
+    filters.applyMealTickets,
     filters.search
   ].filter(Boolean).length;
 
@@ -210,6 +212,28 @@ return (
                   onClick={() => setRatingFilter(undefined)}
                   className="ml-1 text-yellow-600 hover:text-yellow-800"
                 >
+                  ×
+                </button>
+              </span>
+            )}
+            {filters.discounted && (
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-pink-100 text-pink-800">
+                Afi Club Discount: {filters.discounted ? 'Yes' : 'No'}
+                <button
+                  onClick={() => setDiscountFilter(false)}
+                  className="ml-1 text-pink-600 hover:text-pink-800"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+            {filters.applyMealTickets && (
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                Meal Tickets: {filters.applyMealTickets ? 'Yes' : 'No'}
+                <button
+                  onClick={() => setMealTicketsFilter(false)}
+                  className="ml-1 text-purple-600 hover:text-purple-800"
+                > 
                   ×
                 </button>
               </span>
