@@ -9,7 +9,7 @@ interface RestaurantCardProps {
   restaurant: Restaurant;
 }
 
-const RestaurantCard: React.FC<RestaurantCardProps> = memo(({ restaurant }) => {
+const RestaurantCard = memo(({ restaurant }: RestaurantCardProps) => {
   const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
   const { addToFavorites, removeFromFavorites, isFavorite } = useFavorites();

@@ -6,7 +6,7 @@ interface PaginationProps {
   pagination: PaginationInfo;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ pagination }) => {
+const Pagination = ({ pagination }: PaginationProps) => {
   const { setFilters, filters } = useRestaurantStore(); // Adaugă filters pentru debugging
   const { page, pages, total, limit } = pagination;
 

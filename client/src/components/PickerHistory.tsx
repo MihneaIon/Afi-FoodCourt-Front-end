@@ -5,7 +5,7 @@ import { formatRelativeTime, formatDate } from '../utils/performance';
 import { useNavigate } from 'react-router-dom';
 import { showToast } from './Toast';
 
-const PickerHistory: React.FC = () => {
+const PickerHistory = () => {
   const navigate = useNavigate();
   const { stats, markAsVisited, removeFromHistory, clearHistory } = useRandomPickerStats();
   const { addToFavorites, isFavorite } = useFavorites();
@@ -42,8 +42,9 @@ const PickerHistory: React.FC = () => {
       imageUrl: entry.restaurant.imageUrl,
       priceRange: entry.restaurant.priceRange,
       rating: entry.restaurant.rating,
-      applyDiscount: entry.restaurant.applyDiscount,      // Nou cu valoare default
-      discountPercentage: entry.restaurant.discountPercentage, // Nou cu valoare default
+      applyDiscount: entry.restaurant.applyDiscount,
+      discountPercentage: entry.restaurant.discountPercentage,
+      applyMealTickets: entry.restaurant.applyMealTickets,
       categories: entry.restaurant.categories.map((cat: string) => ({ category: { name: cat } })),
       isOpen: true,
       address: '',

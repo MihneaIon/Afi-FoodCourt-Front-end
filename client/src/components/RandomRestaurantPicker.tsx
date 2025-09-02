@@ -21,7 +21,7 @@ interface RandomPickerFilters {
   discounted?: boolean;
 }
 
-const RandomRestaurantPicker: React.FC = () => {
+const RandomRestaurantPicker = () => {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
   const [activeTab, setActiveTab] = useState<'picker' | 'history' | 'favorites'>('picker');
@@ -122,17 +122,22 @@ const RandomRestaurantPicker: React.FC = () => {
   // Random selection with animation
   const selectRandomRestaurant = useCallback(async () => {
     // If we don't have data, fetch it first
+    let restaurants: Restaurant[] = [];
+
     if (!restaurantData?.restaurants?.length) {
       const result = await refetch();
       if (!result.data?.restaurants?.length) {
         showToast.warning('No restaurants found with the selected filters');
         return;
       }
+      // Use the freshly fetched data
+      restaurants = result.data.restaurants;
+    } else {
+      // Use the already loaded data
+      restaurants = restaurantData.restaurants;
     }
 
-    const restaurants = (restaurantData?.restaurants || []).filter(r => 
-      !filters.isOpen || r.isOpen
-    );
+    restaurants = restaurants.filter(r => !filters.isOpen || r.isOpen);
 
     if (restaurants.length === 0) {
       showToast.warning('No restaurants found with the selected filters');
@@ -193,16 +198,16 @@ const RandomRestaurantPicker: React.FC = () => {
   }, [restaurantData, filters, refetch, recordPick]);
 
   // Only auto-select on initial load when modal opens, not on filter changes
-  useEffect(() => {
-    if (isVisible && activeTab === 'picker' && !hasInitialPick && !isSpinning) {
-      // Small delay to ensure modal is fully rendered
-      const timeout = setTimeout(() => {
-        selectRandomRestaurant();
-      }, 100);
+  // useEffect(() => {
+  //   if (isVisible && activeTab === 'picker' && !hasInitialPick && !isSpinning) {
+  //     // Small delay to ensure modal is fully rendered
+  //     const timeout = setTimeout(() => {
+  //       selectRandomRestaurant();
+  //     }, 100);
       
-      return () => clearTimeout(timeout);
-    }
-  }, [isVisible, activeTab, hasInitialPick, isSpinning, selectRandomRestaurant]); // Added missing dependencies
+  //     return () => clearTimeout(timeout);
+  //   }
+  // }, [isVisible, activeTab, hasInitialPick, isSpinning, selectRandomRestaurant]); // Added missing dependencies
 
   const clearFilters = useCallback(() => {
     setFilters({
