@@ -172,7 +172,7 @@ const ReviewCard: React.FC<{ review: Review }> = React.memo(({ review }) => {
         <div className="flex-shrink-0">
           <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
             <span className="text-primary-600 font-medium text-sm">
-              {review.userName.charAt(0).toUpperCase()}
+              {(review.userName || 'Anonymous').charAt(0).toUpperCase()}
             </span>
           </div>
         </div>
