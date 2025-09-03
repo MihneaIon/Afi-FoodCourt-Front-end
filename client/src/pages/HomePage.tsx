@@ -1,4 +1,4 @@
-import React, { useMemo, startTransition } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useRestaurants } from '../hooks/useRestaurant';
 import { useCategories } from '../hooks/usageCategories';
 import { useRestaurantStore } from '../store/restuarantStore';
@@ -9,9 +9,11 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
 import Pagination from '../components/Pagination';
 import RandomRestaurantPicker from '../components/RandomRestaurantPicker';
+import MobileFilterModal from '../components/MobileDilterModal';
 
 const HomePage: React.FC = () => {
-  const { filters } = useRestaurantStore();
+  const { filters, setFilters } = useRestaurantStore();
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   
   // React Query hooks
   const { 
@@ -37,6 +39,14 @@ const HomePage: React.FC = () => {
     restaurantData?.pagination, 
     [restaurantData]
   );
+
+  // Count active filters for mobile button
+  const activeFiltersCount = [
+    filters.category,
+    filters.priceRange,
+    filters.rating,
+    filters.search
+  ].filter(Boolean).length;
 
   // Handle errors
   if (restaurantsError) {
@@ -65,7 +75,6 @@ const HomePage: React.FC = () => {
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            {/* Title */}
             <div className="flex-shrink-0">
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
                 🍽️ Restaurant Finder
@@ -100,7 +109,7 @@ const HomePage: React.FC = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="lg:grid lg:grid-cols-4 lg:gap-8">
-          {/* Sidebar - Hidden on mobile, shown on large screens */}
+          {/* Desktop Sidebar - Hidden on mobile */}
           <div className="hidden lg:block">
             <FilterSidebar 
               categories={categories || []} 
@@ -111,16 +120,23 @@ const HomePage: React.FC = () => {
           {/* Mobile Filter Button - Shown only on mobile */}
           <div className="lg:hidden mb-6">
             <button
-              onClick={() => {
-                // TODO: Implement mobile filter modal
-                console.log('Open mobile filters');
-              }}
-              className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 flex items-center justify-center space-x-2 hover:bg-gray-50 transition-colors"
+              onClick={() => setIsMobileFilterOpen(true)}
+              className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors shadow-sm"
             >
-              <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z" />
+              <div className="flex items-center space-x-2">
+                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z" />
+                </svg>
+                <span className="text-gray-700 font-medium">Filters & Sort</span>
+                {activeFiltersCount > 0 && (
+                  <span className="bg-primary-100 text-primary-800 text-xs font-medium px-2 py-1 rounded-full">
+                    {activeFiltersCount}
+                  </span>
+                )}
+              </div>
+              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
-              <span className="text-gray-700 font-medium">Filters & Sort</span>
             </button>
           </div>
 
@@ -132,25 +148,35 @@ const HomePage: React.FC = () => {
               <>
                 {/* Results header - Responsive */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-                  <p className="text-gray-600">
-                    {pagination?.total || 0} restaurants found
-                    {filters.category && ` in ${categories?.find(c => c.slug === filters.category)?.name}`}
-                    {filters.priceRange && ` • ${filters.priceRange} price range`}
-                    {filters.rating && ` • ${filters.rating}+ stars`}
-                  </p>
-                  <select 
-                    value={filters.sortBy || 'rating'}
-                    onChange={(e) => {
-                      const { setSortBy } = useRestaurantStore.getState();
-                      setSortBy(e.target.value);
-                    }}
-                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full sm:w-auto"
-                  >
-                    <option value="rating">Sort by Rating</option>
-                    <option value="name">Sort by Name</option>
-                    <option value="price">Sort by Price</option>
-                    <option value="newest">Sort by Newest</option>
-                  </select>
+                  <div>
+                    <p className="text-gray-600">
+                      {pagination?.total || 0} restaurants found
+                    </p>
+                    {/* Active filters summary on mobile */}
+                    {activeFiltersCount > 0 && (
+                      <div className="mt-1 sm:hidden">
+                        <p className="text-sm text-primary-600">
+                          {activeFiltersCount} filter{activeFiltersCount !== 1 ? 's' : ''} applied
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                    {/* Sort dropdown */}
+                    <select 
+                      value={filters.sortBy || 'rating'}
+                      onChange={(e) => {
+                        setFilters({ sortBy: e.target.value as any });
+                      }}
+                      className="border border-gray-300 rounded-lg px-3 py-2 text-sm w-full sm:w-auto bg-white"
+                    >
+                      <option value="rating">Sort by Rating ⬇️</option>
+                      <option value="name">Sort by Name ⬇️</option>
+                      <option value="price">Sort by Price ⬇️</option>
+                      <option value="newest">Sort by Newest</option>
+                    </select>
+                  </div>
                 </div>
 
                 <RestaurantGrid restaurants={restaurants} />
@@ -165,20 +191,15 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       </div>
+      {/* Mobile Filter Modal */}
+        <MobileFilterModal
+          isOpen={isMobileFilterOpen}
+          onClose={() => setIsMobileFilterOpen(false)}
+          categories={categories || []}
+          loading={categoriesLoading}
+        />
     </div>
   );
 };
 
 export default HomePage;
-
-// TYO DO: Verificaa
-//  Asigură-te că backend-ul returnează datele în formatul:   
-// {
-//   "restaurants": [...],
-//   "pagination": {
-//     "page": 1,
-//     "limit": 12,
-//     "total": 50,
-//     "pages": 5
-//   }
-// }

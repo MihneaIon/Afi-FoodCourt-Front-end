@@ -46,7 +46,7 @@ export const useRestaurantStore = create<RestaurantStore>((set, get) => ({
     console.log('Store: Current filters', get().filters);
 
     set((state) => {
-      // Resetează pagina la 1 când se schimbă filtrele (except page change)
+      // Resetează pagina la 1 când se schimbă filtrele (exceptie cand se schimb apagina)
       const updatedFilters = {
         ...state.filters,
         ...newFilters,
